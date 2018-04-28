@@ -12,6 +12,6 @@ You are also required to install the module `python-twitter` using pip. This is 
 
 ## Bugs?
 
-If you find any, please raise an issue as this is my first project using this API and I could have implimented it better if I spent more time on this project. 
+If you find any, please raise an issue as this is my first project using this API and I could have implemented it better if I spent more time on this project. 
 
 Please enjoy! 😄
