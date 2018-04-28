@@ -15,8 +15,8 @@ def post():
         api.PostUpdate("", file)
         print(f"I have uploaded {file}!")
     except:
-        print(f"I have failed to upload {file}.")
-        post()
+        print(f"I have failed to upload {file}. I'll try again in an hour.")
+        pass
 # Creates the function for finding and posting files.
 
 while True:
