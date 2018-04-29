@@ -12,8 +12,11 @@ access_token_key = config["accessTokenKey"], access_token_secret = config["acces
 def post():
     try:
         file = random.choice(os.listdir(config["directory"]))
-        api.PostUpdate("", file)
-        print(f"I have uploaded {file}!")
+        if file.lower().endswith((".png", ".jpg", ".jpeg")):
+            api.PostUpdate("", file)
+            print(f"I have uploaded {file}!")
+        else:
+            raise Exception
     except:
         print(f"I have failed to upload {file}. I'll try again in an hour.")
         pass
