@@ -50,6 +50,7 @@ def post():
 # Creates the function for finding and posting files.
 
 sleep_for = config["sleepTime"]
+# Pulls the period of time to sleep for from config and defines it.
 
 while True:
     post()
