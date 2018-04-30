@@ -39,7 +39,7 @@ def post():
                     raise Exception
                 else:
                     pass
-        #api.PostUpdate("", upload)
+        api.PostUpdate("", upload)
         if config["enableOneTime"] == True:
             file.write(f"{upload}\n")
             file.close()
