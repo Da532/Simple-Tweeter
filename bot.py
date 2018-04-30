@@ -15,7 +15,7 @@ try:
         print(success + "Config has been loaded")
 except:
     print(error+ "Config could not be loaded")
-    return
+    exit()
 # Loads the config.
 
 try:
@@ -24,7 +24,7 @@ try:
     print(success + "Connected to the Twitter API")
 except:
     print(error + "Connection could not be established to the Twitter API")
-    return
+    exit()
 # Defines and connects to the Twitter API.
 
 def post():
