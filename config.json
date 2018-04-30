@@ -4,5 +4,6 @@
     "accessTokenKey" : "",
     "accessTokenSecret" : "",
     "directory" : "D:\\Libaries\\Pictures\\Dump",
-    "sleepTime" : 3600
+    "sleepTime" : 3600,
+    "enableOneTime" : true
 }
