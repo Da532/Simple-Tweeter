@@ -30,7 +30,7 @@ except:
 def post():
     try:
         upload = random.choice(os.listdir(config["directory"]))
-        if not upload.lower().endswith((".png", ".jpg", ".jpeg", ".mp4")):
+        if not upload.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".mp4")):
             raise Exception
         if config["enableOneTime"] == True:
             file = open("uploaded.txt", "r+")
