@@ -1,4 +1,4 @@
-import twitter, json, time, os, random
+import twitter, json, time, os, random, builtins
 # Imports the needed requirements.
 
 info = "[Info] "
@@ -29,23 +29,24 @@ except:
 
 def post():
     try:
+        builtins._pass = True
         upload = random.choice(os.listdir(config["directory"]))
         if not upload.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".mp4")):
             raise Exception
         if config["enableOneTime"] == True:
             file = open("uploaded.txt", "r+")
-            for line in file:
-                if line == upload:
-                    raise Exception
-                else:
-                    pass
+            if upload in file.read().split(","):
+                raise Exception
+            else:
+                pass
         api.PostUpdate("", upload)
         if config["enableOneTime"] == True:
-            file.write(f"{upload}\n")
+            file.write(f"{upload},")
             file.close()
         print(success + f"Uploaded {upload}!")
     except:
-        print(error + f"Failed to upload {upload}. I'll try again later.")
+        print(error + f"Failed to upload {upload}. Trying again..")
+        builtins._pass = False
         pass
 # Creates the function for finding and posting files.
 
@@ -54,6 +55,12 @@ sleep_for = config["sleepTime"]
 
 while True:
     post()
+    if _pass == False:
+        post()
+        if _pass == False:
+            post()
+            if _pass == False:
+                print(error + "Failed to upload after three attempts.")
     print(info + f"Sleeping for {sleep_for}s")
     time.sleep(sleep_for)
 # Executes the post function and sleeps for the preset time.
