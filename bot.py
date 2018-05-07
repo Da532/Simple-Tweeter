@@ -54,13 +54,11 @@ sleep_for = config["sleepTime"]
 # Pulls the period of time to sleep for from config and defines it.
 
 while True:
-    post()
-    if _pass == False:
+    x = True
+    while x == True:
         post()
-        if _pass == False:
-            post()
-            if _pass == False:
-                print(error + "Failed to upload after three attempts.")
+        if _pass == True:
+            x = False
     print(info + f"Sleeping for {sleep_for}s")
     time.sleep(sleep_for)
 # Executes the post function and sleeps for the preset time.
