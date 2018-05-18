@@ -1,4 +1,4 @@
-import twitter, json, time, os, random, builtins
+import twitter, json, time, os, random, builtins, requests
 # Imports the needed requirements.
 
 info = "[Info] "
@@ -50,15 +50,50 @@ def post():
         pass
 # Creates the function for finding and posting files.
 
+reddit_name=config["redditName"]
+builtins.attempts = 0
+# Defining functions for Reddit.
+
+def reddit():
+    try:
+        
+        builtins._pass = True
+        with requests.get(f"https://www.reddit.com/r/{reddit_name}/new.json", headers={"user-agent": "Simple-Tweeter"}) as url:
+            data = json.loads(url.content)["data"]["children"][attempts]["data"]
+            upload = data["url"]
+            if config["enableOneTime"] == True:
+                file = open("uploaded.txt", "r+")
+            if upload in file.read().split(","):
+                raise Exception
+            else:
+                pass
+            api.PostUpdate("", upload)
+            if config["enableOneTime"] == True:
+                file.write(f"{upload},")
+                file.close()
+        print(success + f"Uploaded {upload}!")
+        builtins.attempts = builtins.attempts + 1
+    except:
+        print(error + f"Failed to upload {upload}. Trying again..")
+        builtins._pass = False
+        builtins.attempts = builtins.attempts + 1
+        pass
+
+            
 sleep_for = config["sleepTime"]
 # Pulls the period of time to sleep for from config and defines it.
 
 while True:
     x = True
     while x == True:
-        post()
-        if _pass == True:
-            x = False
+        if config["enableReddit"] == True:
+            reddit()
+            if _pass == True:
+                x = False
+        else:
+            post()
+            if _pass == True:
+                x = False
     print(info + f"Sleeping for {sleep_for}s")
     time.sleep(sleep_for)
 # Executes the post function and sleeps for the preset time.

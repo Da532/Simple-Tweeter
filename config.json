@@ -3,7 +3,9 @@
     "consumerSecret" : "",
     "accessTokenKey" : "",
     "accessTokenSecret" : "",
+    "enableReddit" : false,
     "directory" : "D:\\Libaries\\Pictures\\Dump",
     "sleepTime" : 3600,
-    "enableOneTime" : true
+    "enableOneTime" : true,
+    "redditName" : null
 }
