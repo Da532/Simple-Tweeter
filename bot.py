@@ -45,7 +45,10 @@ def post():
             file.close()
         print(success + f"Uploaded {upload}!")
     except:
-        print(error + f"Failed to upload {upload}. Trying again..")
+        try:
+            print(error + f"Failed to upload {upload}. Trying again..")
+        except:
+            print(error + "Failed to upload. Trying again..")
         builtins._pass = False
         pass
 # Creates the function for finding and posting files.
@@ -74,7 +77,10 @@ def reddit():
         print(success + f"Uploaded {upload}!")
         builtins.attempts = builtins.attempts + 1
     except:
-        print(error + f"Failed to upload {upload}. Trying again..")
+        try:
+            print(error + f"Failed to upload {upload}. Trying again..")
+        except:
+            print(error + "Failed to upload. Trying again..")
         builtins._pass = False
         builtins.attempts = builtins.attempts + 1
         pass
