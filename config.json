@@ -3,9 +3,9 @@
     "consumerSecret" : "",
     "accessTokenKey" : "",
     "accessTokenSecret" : "",
-    "enableReddit" : false,
-    "directory" : "D:\\Libaries\\Pictures\\Dump",
+    "directory" : "//location//Simple-Tweeter//images//",
     "sleepTime" : 3600,
     "enableOneTime" : true,
-    "redditName" : null
+    "enableReddit" : false,
+    "redditName" : ""
 }

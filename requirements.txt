@@ -1,1 +1,1 @@
-python-twitter
+tweepy

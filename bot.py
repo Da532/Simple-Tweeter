@@ -1,105 +1,113 @@
-import twitter, json, time, os, random, builtins, requests
+import tweepy, json, time, os, random, builtins, requests, urllib.request
 # Imports the needed requirements.
 
-info = "[Info] "
-success = "[Success] "
-error = "[Error] "
-# Defines the prefixes for better logging. 
+class log:
+    def info(text: str):
+        print(f"[Info] {text}")
+    def success(text: str):
+        print(f"[Success] {text}")
+    def error(text: str):
+        print(f"[Error] {text}")
+# The class for outputting console logs.
 
-print(info + "Starting..")
+log.info("Starting..")
 # Prints a message declaring the bot is starting. 
 
 try:
     with open("config.json", "r") as unloaded_config:
         config = json.load(unloaded_config)
-        print(success + "Config has been loaded")
+        log.success("Config has been loaded")
 except:
-    print(error+ "Config could not be loaded")
+    log.error("Config could not be loaded")
     exit()
 # Loads the config.
 
 try:
-    api = twitter.Api(consumer_key = config["consumerKey"], consumer_secret = config["consumerSecret"], 
-    access_token_key = config["accessTokenKey"], access_token_secret = config["accessTokenSecret"])
-    print(success + "Connected to the Twitter API")
+    auth = tweepy.OAuthHandler(config["consumerKey"], config["consumerSecret"])
+    auth.set_access_token(config["accessTokenKey"], config["accessTokenSecret"])
+    api = tweepy.API(auth)
+    log.success("Connected to the Twitter API")
 except:
-    print(error + "Connection could not be established to the Twitter API")
+    log.error("Connection could not be established to the Twitter API")
     exit()
 # Defines and connects to the Twitter API.
 
+log.info(f"User: {api.me().screen_name}")
+log.info(f"Followers: {api.me().followers_count}")
+time.sleep(1)
+# Prints basic information about the account when ready, then pauses for a second.
+
 def post():
     try:
-        builtins._pass = True
         upload = random.choice(os.listdir(config["directory"]))
         if not upload.lower().endswith((".png", ".jpg", ".jpeg", ".gif", ".mp4")):
             raise Exception
-        if config["enableOneTime"] == True:
-            file = open("uploaded.txt", "r+")
-            if upload in file.read().split(","):
+        if config["enableOneTime"]:
+            with open("uploaded.json", "r") as unloaded_uploads:
+                file = json.load(unloaded_uploads)
+            if upload in file:
                 raise Exception
             else:
-                pass
-        api.PostUpdate("", upload)
-        if config["enableOneTime"] == True:
-            file.write(f"{upload},")
-            file.close()
-        print(success + f"Uploaded {upload}!")
+                file.append(upload)
+        api.update_with_media(config["directory"] + upload)
+        if config["enableOneTime"]:
+            with open("uploaded.json", "w") as unloaded_uploads:
+                json.dump(file, unloaded_uploads)
+        log.success(f"Uploaded {upload}!")
+        return True
     except:
         try:
-            print(error + f"Failed to upload {upload}. Trying again..")
+            log.error(f"Failed to upload {upload}. Trying again..")
         except:
-            print(error + "Failed to upload. Trying again..")
-        builtins._pass = False
-        pass
-# Creates the function for finding and posting files.
+            log.error("Failed to upload. Trying again..")
+        return False
+# Defines the function for finding and posting files.
 
 reddit_name=config["redditName"]
 builtins.attempts = 0
-# Defining functions for Reddit.
+# Defining vars for Reddit.
 
 def reddit():
     try:
-        
-        builtins._pass = True
         with requests.get(f"https://www.reddit.com/r/{reddit_name}/new.json", headers={"user-agent": "Simple-Tweeter"}) as url:
             data = json.loads(url.content)["data"]["children"][attempts]["data"]
-            upload = data["url"]
-            if config["enableOneTime"] == True:
-                file = open("uploaded.txt", "r+")
-            if upload in file.read().split(","):
+        url = data["url"]
+        upload = url.split("/")[-1]
+        urllib.request.urlretrieve(url, upload)
+        if config["enableOneTime"]:
+            with open("uploaded.json", "r") as unloaded_uploads:
+                file = json.load(unloaded_uploads)
+            if upload in file:
                 raise Exception
             else:
-                pass
-            api.PostUpdate("", upload)
-            if config["enableOneTime"] == True:
-                file.write(f"{upload},")
-                file.close()
-        print(success + f"Uploaded {upload}!")
-        builtins.attempts = builtins.attempts + 1
+                file.append(upload)
+        api.update_with_media(upload)
+        os.remove(upload)
+        if config["enableOneTime"]:
+            with open("uploaded.json", "w") as unloaded_uploads:
+                json.dump(file, unloaded_uploads)
+        log.success(f"Uploaded {upload}!")
+        builtins.attempts += 1
+        return True
     except:
         try:
-            print(error + f"Failed to upload {upload}. Trying again..")
+            log.error(f"Failed to upload {upload}. Trying again..")
         except:
-            print(error + "Failed to upload. Trying again..")
-        builtins._pass = False
-        builtins.attempts = builtins.attempts + 1
-        pass
-
+            log.error("Failed to upload. Trying again..")
+        builtins.attempts += 1
+        return False
             
 sleep_for = config["sleepTime"]
 # Pulls the period of time to sleep for from config and defines it.
 
 while True:
-    x = True
-    while x == True:
-        if config["enableReddit"] == True:
-            reddit()
-            if _pass == True:
-                x = False
+    while True:
+        if config["enableReddit"]:
+            if reddit():
+                break
         else:
-            post()
-            if _pass == True:
-                x = False
-    print(info + f"Sleeping for {sleep_for}s")
+            if post():
+                break
+    log.info(f"Sleeping for {sleep_for}s")
     time.sleep(sleep_for)
-# Executes the post function and sleeps for the preset time.
+#Executes the post function and sleeps for the preset time.
