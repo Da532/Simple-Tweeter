@@ -53,6 +53,8 @@ def post():
         if config["enableOneTime"]:
             with open("uploaded.json", "w") as unloaded_uploads:
                 json.dump(file, unloaded_uploads)
+        if config["enableDeleteOnPost"]:
+            os.remove(config["directory"] + upload)
         log.success(f"Uploaded {upload}!")
         return True
     except:
