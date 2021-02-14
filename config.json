@@ -6,6 +6,9 @@
     "directory" : "//location//Simple-Tweeter//images//",
     "sleepTime" : 3600,
     "enableOneTime" : true,
+    "enableDeleteOnPost" : false,
     "enableReddit" : false,
-    "redditName" : ""
+    "redditNames" : [""],
+    "redditMode" : "hot",
+    "tweetContent" : ""
 }

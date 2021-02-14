@@ -49,10 +49,12 @@ def post():
                 raise Exception
             else:
                 file.append(upload)
-        api.update_with_media(config["directory"] + upload)
+        api.update_with_media(config["directory"] + upload, config["tweetContent"])
         if config["enableOneTime"]:
             with open("uploaded.json", "w") as unloaded_uploads:
                 json.dump(file, unloaded_uploads)
+        if config["enableDeleteOnPost"]:
+            os.remove(config["directory"] + upload)
         log.success(f"Uploaded {upload}!")
         return True
     except:
@@ -63,13 +65,16 @@ def post():
         return False
 # Defines the function for finding and posting files.
 
-reddit_name=config["redditName"]
+builtins.reddit_num = 0
+builtins.reddit_name = config["redditNames"][reddit_num]
 builtins.attempts = 0
+builtins.failed = 0
+mode = config["redditMode"]
 # Defining vars for Reddit.
 
 def reddit():
     try:
-        with requests.get(f"https://www.reddit.com/r/{reddit_name}/new.json", headers={"user-agent": "Simple-Tweeter"}) as url:
+        with requests.get(f"https://www.reddit.com/r/{reddit_name}/{mode}.json", headers={"user-agent": "Simple-Tweeter"}) as url:
             data = json.loads(url.content)["data"]["children"][attempts]["data"]
         url = data["url"]
         upload = url.split("/")[-1]
@@ -81,13 +86,14 @@ def reddit():
                 raise Exception
             else:
                 file.append(upload)
-        api.update_with_media(upload)
+        api.update_with_media(upload, config["tweetContent"])
         os.remove(upload)
         if config["enableOneTime"]:
             with open("uploaded.json", "w") as unloaded_uploads:
                 json.dump(file, unloaded_uploads)
         log.success(f"Uploaded {upload}!")
         builtins.attempts += 1
+        builtins.failed = 0
         return True
     except:
         try:
@@ -95,6 +101,21 @@ def reddit():
         except:
             log.error("Failed to upload. Trying again..")
         builtins.attempts += 1
+        builtins.failed += 1
+        if failed > 9:
+            if len(config["redditNames"]) == 1: return False
+            elif len(config["redditNames"]) > reddit_num+1:
+                builtins.reddit_num +=1
+                builtins.reddit_name = config["redditNames"][reddit_num]
+                builtins.failed = 0
+                builtins.attempts = 0
+                log.success(f"Changed Reddit to: {reddit_name}")
+            else:
+                builtins.reddit_num = 0
+                builtins.reddit_name = config["redditNames"][reddit_num]
+                builtins.failed = 0
+                builtins.attempts = 0
+                log.success(f"Changed Reddit to: {reddit_name}")
         return False
             
 sleep_for = config["sleepTime"]
